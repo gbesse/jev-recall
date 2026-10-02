@@ -1,0 +1,26 @@
+{
+  "name": "@gbesse/jev-recall",
+  "version": "0.1.0",
+  "description": "Quarantine, audit and replay rejected AI decisions before evidence is lost.",
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=22" },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "bin": { "jev-recall": "./dist/cli.js" },
+  "files": ["dist", "README.md", "LICENSE", "SECURITY.md"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "check": "tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "release:check": "npm run check && npm test && npm run build && npm pack --dry-run",
+    "prepack": "npm run build"
+  },
+  "devDependencies": { "@types/node": "^24.5.2", "tsx": "^4.20.5", "typescript": "^5.9.2" },
+  "repository": { "type": "git", "url": "git+https://github.com/gbesse/jev-recall.git" },
+  "homepage": "https://github.com/gbesse/jev-recall#readme",
+  "bugs": { "url": "https://github.com/gbesse/jev-recall/issues" },
+  "publishConfig": { "access": "public" },
+  "keywords": ["decision-audit", "false-negative", "memory", "replay", "jev", "ai-safety"]
+}
