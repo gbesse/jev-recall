@@ -37,6 +37,24 @@ jev-recall sample .local/recall.jsonl --count 20
 
 The CLI never prints retained full evidence.
 
+## Loss Radar pilot
+
+`planLossAudit` freezes a fixed-budget stratified sample, including caller-marked
+priority rejects and a random ordinary stratum. `estimateLossAudit` requires
+complete human labels and corrects for different sampling fractions; a raw
+reviewed-set rate is not a population estimate. Both are provider-independent.
+
+```sh
+npm run demo:loss-radar
+jev-recall audit-plan .local/recall.jsonl --budget 20 --priority .local/priority-ids.json
+jev-recall audit-report .local/plan.json --labels .local/labels.json
+```
+
+The demo is synthetic and makes zero network calls. The CLI prints JSON to stdout
+without persisting it; store plans and labels privately. See the
+[sampling assumptions, interval limits, and pilot gates](docs/loss-radar-pilot.md).
+This is an audit primitive, not a live Zammad connector or a proven quality gain.
+
 ## Limits
 
 The observed false-negative rate is meaningful only for a representative audit sample. Fingerprints prove identity but cannot reconstruct discarded evidence. Full retention may create privacy and compliance obligations; encryption, deletion policy and access control remain the operator's responsibility. One `RecallStore` instance serializes writes, but multiple processes require an external transactional writer.
