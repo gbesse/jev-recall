@@ -182,8 +182,8 @@ export class RecallStore {
   }
 
   async compact(): Promise<void> {
-    const records = await this.list();
     await this.#serialize(async () => {
+      const records = await this.list();
       await this.#prepare(this.path);
       const temporary = `${this.path}.${randomUUID()}.tmp`;
       await writeFile(temporary, records.map(record => `${JSON.stringify(record)}\n`).join(""), { mode: 0o600 });
