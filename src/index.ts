@@ -2,6 +2,9 @@ import { createHash, randomUUID } from "node:crypto";
 import { appendFile, chmod, mkdir, open, readFile, rename, stat, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 
+export { planLossAudit, estimateLossAudit } from "./loss-radar.js";
+export type { LossAuditPlan, LossAuditRow, LossAuditLabel, LossAuditEstimate } from "./loss-radar.js";
+
 export type RetentionMode = "fingerprint" | "preview" | "full";
 export type RecallStatus = "pending" | "confirmed-reject" | "recovered" | "expired";
 
