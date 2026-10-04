@@ -28,6 +28,8 @@ The default retention mode stores only a SHA-256 evidence fingerprint. Choose `p
 - `RecallStore.review` appends an audit event instead of overwriting the original record.
 - `RecallStore.compact` materializes current state while keeping the append-only event history.
 
+Compaction reads its snapshot inside the same write queue as appends: records queued before it are included, and records queued during it are appended after the snapshot is replaced.
+
 ```sh
 jev-recall stats .local/recall.jsonl
 jev-recall sample .local/recall.jsonl --count 20

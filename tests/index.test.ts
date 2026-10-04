@@ -42,3 +42,28 @@ test("replays only full evidence and detects recovered decisions", async () => {
   assert.equal(results[0]?.status, "recovered");
   await assert.rejects(() => replay([createRecord(input)], async () => ({ decision: "keep", model: "x", policyVersion: "2" })), /full retained evidence/);
 });
+
+test("compaction cannot overwrite a concurrently queued record", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "recall-compact-"));
+  const store = new RecallStore(join(directory, "quarantine.jsonl"));
+  const before = createRecord(input);
+  const during = createRecord({ ...input, sourceId: "message-2" });
+  await store.append(before);
+  const originalList = store.list.bind(store);
+  let snapshotReady!: () => void;
+  let releaseSnapshot!: () => void;
+  const ready = new Promise<void>(resolve => { snapshotReady = resolve; });
+  const release = new Promise<void>(resolve => { releaseSnapshot = resolve; });
+  store.list = async () => {
+    const snapshot = await originalList();
+    snapshotReady();
+    await release;
+    return snapshot;
+  };
+  const compacting = store.compact();
+  await ready;
+  const appending = store.append(during);
+  releaseSnapshot();
+  await Promise.all([compacting, appending]);
+  assert.deepEqual((await originalList()).map(record => record.id), [before.id, during.id]);
+});
